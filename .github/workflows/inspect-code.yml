@@ -18,6 +18,11 @@ jobs:
         uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1
+          
+      - name: copy_unity_library_folder_from_caches
+        shell: bash
+        run:
+          bundle exec fastlane unity_restore_library_caches
 
       - name: Install JetBrains InspectCode
         run: 
@@ -31,3 +36,8 @@ jobs:
         with:
           name: inspectcode-report
           path: ./tools/Inspectcode/inspectcode.json
+
+      - name: cache_unity_library_folder
+        shell: bash
+        run:
+          bundle exec fastlane unity_store_library_caches
