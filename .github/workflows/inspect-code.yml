@@ -3,7 +3,7 @@ name: inspect-code
 on:
   workflow_dispatch:
   pull_request:
-    types: [opened, synchronize]
+    types: [ opened, synchronize ]
     paths:
       - '.github/workflows/inspect-code.yml'
       - "client/**"
@@ -14,20 +14,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout
+      - name: Checkout code
         uses: actions/checkout@v4.1.0
+
+      - name: Get list of changed files
+        id: changed_files
+        uses: actions/github-script@v6
         with:
-          fetch-depth: 1
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr_number = context.payload.pull_request.number;
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr_number,
+            });
+            const csFiles = files
+              .map(file => file.filename)
+              .filter(filename => filename.endsWith('.cs'));
+            core.setOutput("files", csFiles.join("\n"));
 
-      - name: Install JetBrains InspectCode
-        run: 
-          dotnet tool install --global JetBrains.ReSharper.GlobalTools
-
-      - name: Run InspectCode
-        run: jb inspectcode ./client/TestAssembly.csproj --output=./tools/Inspectcode/inspectcode.json
-
-      - name: Upload InspectCode report
-        uses: actions/upload-artifact@v4.1.0
-        with:
-          name: inspectcode-report
-          path: ./tools/Inspectcode/inspectcode.json
+      - name: Output changed files
+        run: |
+          echo "変更有りのC＃ファイル:"
+          echo "${{ steps.changed_files.outputs.files }}"
