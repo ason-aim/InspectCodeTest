@@ -1,0 +1,33 @@
+name: inspect-code
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - '.github/workflows/inspect-code.yml'
+      - "client/**"
+
+jobs:
+  inspect-code:
+    name: コード静的解析
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.1.0
+        with:
+          fetch-depth: 1
+
+      - name: Install JetBrains InspectCode
+        run: 
+          dotnet tool install --global JetBrains.ReSharper.GlobalTools
+
+      - name: Run InspectCode
+        run: jb inspectcode ./client/TestAssembly.csproj --output=./tools/Inspectcode/inspectcode.json
+
+      - name: Upload InspectCode report
+        uses: actions/upload-artifact@v4.1.0
+        with:
+          name: inspectcode-report
+          path: ./tools/Inspectcode/inspectcode.json
