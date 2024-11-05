@@ -1,42 +1,37 @@
-name: Code Analysis with JetBrains InspectCode
+name: inspect-code
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
   pull_request:
-    branches:
-      - main
+    types: [opened, synchronize]
+    paths:
+      - '.github/workflows/inspect-code.yml'
+      - "client/**"
 
 jobs:
-  analyze_code:
-    name: Run JetBrains InspectCode
+  inspect-code:
+    name: コード静的解析
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: checkout
+        uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 1
-
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: '7.0.x'  # 请根据需要指定 .NET 版本
-
-      - name: Restore NuGet packages
-        run: dotnet restore ./client/Applications.Runtime.csproj
+      - name: setup bundle
+        shell: bash
+        run:
+          bundle install
 
       - name: Install JetBrains InspectCode
-        run: |
+        run: 
           dotnet tool install --global JetBrains.ReSharper.GlobalTools
-          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Run InspectCode
-        run: jb inspectcode ./client/Applications.Runtime.csproj --output=./tools/Inspectcode/inspectcode.json
+        run: jb inspectcode ./client/TestAssembly.csproj --output=./tools/Inspectcode/inspectcode.json
 
       - name: Upload InspectCode report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.1.0
         with:
           name: inspectcode-report
           path: ./tools/Inspectcode/inspectcode.json
