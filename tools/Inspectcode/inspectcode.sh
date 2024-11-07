@@ -1,11 +1,20 @@
 #!/bin/bash
+
 # fanフォルダに移動
 cd ../..
-# インストール、後から消したい
-dotnet tool install -g JetBrains.ReSharper.GlobalTools --arch arm64
+
+# インストールチェック
+if jb inspectcode --version &> /dev/null; then
+    echo "ReSharper InspectCode 既にインストール済み"
+else
+    echo "ReSharper InspectCode インストール..."
+    dotnet tool install -g JetBrains.ReSharper.GlobalTools --arch arm64
+fi
+
 # 分析、複数のcsprojを一緒に実行したい
 # 分析結果出力先は、実行ファイルと同じフォルダ
-jb inspectcode ./client/TestAssembly.csproj --output=./tools/Inspectcode/inspectcode.json
+jb inspectcode ./client/TestAssembly.csproj --exclude="**/TestBehaviourScript.cs" --output=./tools/Inspectcode/inspectcode.json
+
 # ログ確認用、本番は要らないと思う
 echo "Press Enter to exit..."
 read
