@@ -17,7 +17,7 @@ fi
 jb inspectcode ./client/client.sln \
   --build \
   --eXtensions=JetBrains.Unity \
-  --include="**/TestBehaviourScript.cs;**/TestScript.cs" \
+  --include="Assets/Test/TestBehaviourScript.cs;Assets/Test/TestScript.cs" \
   --settings="./client/client.sln.DotSettings" \
   --severity=INFO \
   --format=Text \
