@@ -12,8 +12,10 @@ else
 fi
 
 # 分析、複数のcsprojを一緒に実行したい
-# 分析結果出力先は、実行ファイルと同じフォルダ
-jb inspectcode ./client/TestAssembly.csproj --exclude="**/TestBehaviourScript.cs" --output=./tools/Inspectcode/inspectcode.json
+# output分析結果出力先は、実行ファイルと同じフォルダ
+jb inspectcode ./client/client.sln \
+  --include="**/TestBehaviourScript.cs;**/TestScript.cs" \
+  --output=./tools/Inspectcode/inspectcode.json
 
 # ログ確認用、本番は要らないと思う
 echo "Press Enter to exit..."
