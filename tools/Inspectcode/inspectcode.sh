@@ -14,7 +14,10 @@ fi
 # 分析、複数のcsprojを一緒に実行したい
 # output分析結果出力先は、実行ファイルと同じフォルダ
 jb inspectcode ./client/client.sln \
+  --build \
+  --eXtensions=JetBrains.Unity \
   --include="**/TestBehaviourScript.cs;**/TestScript.cs" \
+  --settings="./client/client.sln.DotSettings" \
   --output=./tools/Inspectcode/inspectcode.json
 
 # ログ確認用、本番は要らないと思う
