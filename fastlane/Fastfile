@@ -1,0 +1,81 @@
+# frozen_string_literal: true
+
+import('appcenter/Fastfile')
+import('git/Fastfile')
+import('slack/Fastfile')
+import('unity/Fastfile')
+import('ios/Fastfile')
+import('emlauncher/Fastfile')
+
+# アプリの実行環境、そのうちステージング等を増やす形となる。
+module AppEnv
+  DEV = 'Dev'
+  PRODUCTION = 'Production'
+
+  def self.production?(app_env)
+    app_env == AppEnv::PRODUCTION
+  end
+end
+
+# 対応プラットフォームの一覧
+module Platform
+  NONE = ''
+  ANDROID = 'Android'
+  IOS = 'iOS'
+  WINDOWS = 'Windows'
+end
+
+lane :hello_world do
+  p('Hello World Fastlane')
+end
+
+error do |_lane, exception|
+  slack_send_message(message: "エラー発生！\n #{exception.full_message}", success: false)
+end
+
+# TODO: ファイルを分離させる
+lane :build_app_flow do |options|
+  app_env = options.fetch(:app_env)
+  platform = options.fetch(:platform)
+  build_number = options.fetch(:build_number, 1)
+
+  # NOTE: Jenkinsのジョブ番号をビルドIDに使用している。この環境変数はジョブ実行時に自動的に設定される。
+  build_number = ENV.fetch('BUILD_NUMBER') if ENV.fetch('BUILD_NUMBER', nil)
+
+  # TODO: 抽象度をあげる
+  unity_builds_windows_build_app(app_env: app_env) if platform == Platform::WINDOWS
+  unity_builds_ios_build_app(app_env: app_env, build_number: build_number) if platform == Platform::IOS
+  if platform == Platform::ANDROID
+    unity_builds_android_build_app(app_env: app_env, is_aab: false, build_number: build_number)
+  end
+
+  # Windowsの場合はzipをアップロードする
+  upload_object_path =
+    case platform
+    when Platform::WINDOWS
+      calc_build_archive_app_path_with_ext(platform, app_env, is_zip: true)
+    else
+      calc_build_archive_app_path_with_ext(platform, app_env)
+    end
+
+  # NOTE: 各種配信プラットフォームにアプリをアップロード
+  if platform == Platform::IOS
+    app_name = calc_app_name(app_env)
+    ios_archive_dir_path = File.join(calc_build_archive_dir_path(Platform::IOS, app_env), calc_app_name(app_env))
+    export_ipa(
+      workspace_path: File.join(ios_archive_dir_path, 'Unity-iPhone.xcworkspace'),
+      output_directory_path: ios_archive_dir_path,
+      output_ipa_name: app_name
+    )
+    ipa_path = File.join(ios_archive_dir_path, app_name)
+  end
+
+  emlauncher_upload_flow(platform: platform, app_env: app_env, app_description: 'nothing...')
+
+  # TODO: iOSはテストフライト向けのURLを指定する？
+  unity_notify_build_app(
+    platform: platform,
+    app_env: app_env,
+    download_url: calc_appcenter_url(platform)
+  )
+end

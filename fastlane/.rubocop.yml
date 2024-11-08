@@ -1,0 +1,5 @@
+AllCops:
+  NewCops: enable
+# NOTE: 関数にgetを使いたいのでオフ。使わないと変数との違いが曖昧になるので。
+Naming/AccessorMethodName:
+  Enabled: false
