@@ -20,7 +20,7 @@ include_files=$(printf "%b" "$include_files" | tr '\n' ';')
 
 # 分析
 # settingsはRiderのプロジェクト設定と同じものを参照している
-# TODO : severityは、実際のfanプロジェクトで検証してから決める
+# severityは提案からエラーまでに設定したが、実際の状況によって変更
 # output分析結果出力先は、実行ファイルと同じフォルダ
 # format=Textが一番簡潔なフォーマット、他は[Sarif, Html, Xml]など細かい出力が設定出来る
 jb inspectcode ./client/client.sln \
@@ -29,10 +29,15 @@ jb inspectcode ./client/client.sln \
   --eXtensions=JetBrains.Unity \
   --include="$include_files" \
   --settings="./client/client.sln.DotSettings" \
-  --severity=INFO \
+  --severity=SUGGESTION \
   --format=Text \
   --output=./tools/Inspectcode/inspectcode.txt
 
 # TODO : ログ確認用、本番は要らないと思う
 echo "Press Enter to exit..."
 read
+
+# dllの指定、複数可
+#  --project=TestAssembly \
+#  --project=Test2Assembly \
+#  --project=Test3Assembly \
