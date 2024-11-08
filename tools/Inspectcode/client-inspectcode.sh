@@ -10,7 +10,7 @@ if jb inspectcode --version &> /dev/null; then
     echo "ReSharper InspectCode 既にインストール済み"
 else
     echo "ReSharper InspectCode インストール..."
-    dotnet tool install -g JetBrains.ReSharper.GlobalTools --arch arm64
+    dotnet tool install -g JetBrains.ReSharper.GlobalTools
 fi
 
 # 外部からの解析するファイルを指定する引数、このまま実行するとデフォルトのAssets下全ての.csが解析対象になる
@@ -31,7 +31,7 @@ jb inspectcode ./client/client.sln \
   --settings="./client/client.sln.DotSettings" \
   --severity=SUGGESTION \
   --format=Text \
-  --output=./tools/Inspectcode/inspectcode.txt
+  --output=./tools/Inspectcode/client-inspectcode.txt
 
 # TODO : ログ確認用、本番は要らないと思う
 echo "Press Enter to exit..."

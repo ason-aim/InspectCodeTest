@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+lane :client-inspect-code do
+  include_files = options[:include_files] # GitHub Actions .yml　からの　差分ファイル include_files
+  output = sh("#{get_project_dir}/tools/Inspectcode/client-inspectcode.sh '#{include_files}'")
+  puts output
+  
+  # 分析結果に.csがある場合
+  if output.include?(".cs")
+      UI.user_error!("修正して貰いたいファイルがあります。") # 強制的にエラーを出す
+   else
+      puts "Looks Good To Machine!"
+    end
+end

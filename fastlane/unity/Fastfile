@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+import('unity/builds/Fastfile')
+import('unity/caches/Fastfile')
+import('unity/tests/Fastfile')
+import('unity/masters/Fastfile')
+import('unity/checkCompileError/Fastfile')
+import('unity/inspectcode/Fastfile')
+
+# NOTE: 元々マシン別の環境変数を参照していたが、バージョンアップ時に破綻するのでコード内で管理するように。
+# 1ブランチあたりで様々なUnityバージョンを参照したいなどがあれば別途検討
+def get_unity_exe_path
+  return 'C:\PROGRA~1\Unity\Hub\Editor\2022.3.17f1\Editor\Unity.exe' if FastlaneCore::Helper.is_windows?
+  return '/Applications/Unity/Hub/Editor/2022.3.17f1/Unity.app/Contents/MacOS/Unity' if FastlaneCore::Helper.is_mac?
+
+  ''
+end
+
+def get_project_dir
+  '../client'
+end

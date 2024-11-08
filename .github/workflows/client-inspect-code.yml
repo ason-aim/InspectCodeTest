@@ -1,16 +1,16 @@
-name: inspect-code
+name: client-inspect-code
 
 on:
   workflow_dispatch:
   pull_request:
     types: [ opened, synchronize ]
     paths:
-      - '.github/workflows/inspect-code.yml'
+      - '.github/workflows/client-inspect-code.yml'
       - "client/**"
 
 jobs:
-  inspect-code:
-    name: コード静的解析
+  client-inspect-code:
+    name: コード静的解析client
     runs-on: ubuntu-latest
 
     steps:
@@ -38,3 +38,8 @@ jobs:
         run: |
           echo "変更有りのC＃ファイル:"
           echo "${{ steps.changed_files.outputs.files }}"
+      
+      - name: inspectCode
+        shell: bash
+        run:
+          bundle exec fastlane client-inspect-code include_files:"${{ steps.changed_files.outputs.include_files }}"
