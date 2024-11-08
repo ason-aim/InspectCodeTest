@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class TestBehaviourScript : MonoBehaviour
+public class Test2BehaviourScript : MonoBehaviour
 {
     private readonly int aa = 0;
     [SerializeField] private int bb = 0;
