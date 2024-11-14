@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638665574281393416
-    m_Hash: 438556125
+      ticks: 638665580245422977
+    m_Hash: 3784329370
   m_LockFileStatus:
     m_FilePath: D:/Projects/InspectCodeTest/client/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638665574282075631
-    m_Hash: 992984710
+      ticks: 638665580245422977
+    m_Hash: 2450272876
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
